@@ -1,5 +1,13 @@
 import pyautogui
 import pytesseract
+import cv2
+import numpy as np
+
+# Function to draw a red dot at the specified coordinates
+def draw_red_dot(x, y):
+    pyautogui.click(x, y)
+    pyautogui.moveTo(x, y, duration=0.2)
+    pyautogui.click(button='right')  # Right-click to draw a red dot
 
 # Display a message to prompt the user to select the region
 print("Please control-click the top-left corner of the region.")
@@ -18,6 +26,16 @@ height = bottom_right_y - top_left_y
 
 # Take a screenshot of the selected area
 screenshot = pyautogui.screenshot(region=(top_left_x, top_left_y, width, height))
+
+# Draw red dots at the selected corners
+draw_red_dot(top_left_x, top_left_y)
+draw_red_dot(bottom_right_x, bottom_right_y)
+
+# Convert the screenshot to a format that can be drawn on
+screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+
+# Save the screenshot with red dots for reference (optional)
+cv2.imwrite('screenshot_with_dots.png', screenshot)
 
 # Extract text from the screenshot using pytesseract
 text = pytesseract.image_to_string(screenshot)
